@@ -11,6 +11,14 @@ This program is used to plot contour map from fits image.
 	contour.py -c 1.8e-3 -w '18 -8 -20 6' -n cta102-note.txt -i cta102.fits -o cta102.png
 ![CTA 102 contour image](cta102.png)
 
+## cc2note.py
+This program is used to create cta102-note.txt file which is input file of contour.py. The cta102-note.txt file contain some annotations parameters.
+	1. text, x, y, some text
+	2. ellipse, x, y, major axis, minor axis, posiation angle
+	3. annotation, x1, y1, x2, y2, some text
+
+	cc2note.py 2230+114m.fits cta102-note.txt
+
 ## polplot.py
 This program is use to plot polarization map from vlbi fits image.
 You should specify the input fits images by -i or --infile,
