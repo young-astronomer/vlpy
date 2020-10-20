@@ -1,5 +1,5 @@
 # vlpy
-some python code for VLBI data analysis and visualization
+Some python programs for VLBI data analysis and visualization
 ## contour.py
 This program is used to plot contour map from fits image.
 ### Runnig program
