@@ -13,9 +13,9 @@ This program is used to plot contour map from fits image.
 
 ## cc2note.py
 This program is used to create cta102-note.txt file which is input file of contour.py. The cta102-note.txt file contain some annotations parameters.
-	1. text, x, y, some text
-	2. ellipse, x, y, major axis, minor axis, posiation angle
-	3. annotation, x1, y1, x2, y2, some text
+1. text, x, y, some text
+2. ellipse, x, y, major axis, minor axis, posiation angle
+3. annotation, x1, y1, x2, y2, some text
 
 	cc2note.py 2230+114m.fits cta102-note.txt
 
