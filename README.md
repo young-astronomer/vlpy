@@ -10,7 +10,7 @@ This program is used to plot contour map from fits image.
 ### Examples
 contour.py -c 1.8e-3 -w '18 -8 -20 6' -n cta102-note.txt -i cta102.fits -o cta102.png
 <div  align="center">    
-<img src="cta102.png" width = "400" height = "400" alt="CTA 102 contour image" />
+<img src="./cta102.png" width = "400" height = "400" alt="CTA 102 contour image" />
 </div>
 
 ## polplot.py
