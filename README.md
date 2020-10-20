@@ -9,7 +9,7 @@ This program is used to plot contour map from fits image.
 	4. contour.py -i <input.fits> -o <output.png> -c <0.001> -w "<15 -15 -25 5>"
 ### Examples
 contour.py -c 1.8e-3 -w '18 -8 -20 6' -n cta102-note.txt -i cta102.fits -o cta102.png
-![avatar](cta102.png =400x400)
+<img src="./cta102.png" width = "400" height = "400" alt="CTA 102 contour image" align=center />
 ## polplot.py
 This program is use to plot polarization map from vlbi fits image.
 You should specify the input fits images by -i or --infile,
