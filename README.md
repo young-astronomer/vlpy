@@ -7,6 +7,9 @@ This program is used to plot contour map from fits image.
 	2. contour.py <input.fits> <output.pdf> <cmul>
 	3. contour.py <input.fits> <output.jpg> <cmul> <win>
 	4. contour.py -i <input.fits> -o <output.png> -c <0.001> -w "<15 -15 -25 5>"
+### Examples
+contour.py -c 1.8e-3 -w '18 -8 -20 6' -n cta102-note.txt -i cta102.fits -o cta102.png
+
 ## polplot.py
 This program is use to plot polarization map from vlbi fits image.
 You should specify the input fits images by -i or --infile,
