@@ -24,6 +24,17 @@ This program is used to plot contour map from fits image.
 ## mapplot.py
 plot color map from fits image
 
+### Parameters
++. -i, --infile: 输入文件，该文件必须是fits图像
++. -o, --outfile: 输出文件，文件可以是pdf, png, jpg格式
++. -f, --figsize: 输出图像的尺寸，单位是英寸。有时候colormap和绘图区没有对齐，可以通过调整figsize使其对齐
++. -w, --win: 绘图区域
++. -c, --cmul: 等值线的小值
++. -c, --levs: 等高线值列表。可选参数。默认值是cmul X (-1, 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096)
++. -a, --annotatefile: 标记文件，主要用于在图像上添加文字，箭头等。
++. -n, --normalize: 颜色归一化参数。有线性、对数、双对数、幂律等类型可供选择。[matplotlib.colors](https://matplotlib.org/3.2.1/api/colors_api.html)
++. --colormap: 颜色表，有jet, rainbow, plasma, hot, gnuplot, gnuplot2 等选项可供选择。[Choosing Colormaps in Matplotlib](https://matplotlib.org/3.1.1/tutorials/colors/colormaps.html)
+
 ### Examples:
 	1. mapplot.py -i cta102.fits -o cta102-color.pdf -c 1.8e-3 -w '18 -8 -20 6' -f '7 6' -n 'power 0.5'
 	2. mapplot.py -w '18 -8 -20 6' -f '4.0 6' -n 'power 0.5' cta102.fits 1.8e-3
