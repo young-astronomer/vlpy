@@ -34,6 +34,7 @@ plot color map from fits image
 + -l, --levs: 等高线值列表。可选参数。默认值是cmul X (-1, 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096)
 + -a, --annotatefile: 标记文件，主要用于在图像上添加文字，箭头等。
 + -n, --normalize: 颜色归一化参数。有线性、对数、双对数、幂律等类型可供选择。[matplotlib.colors](https://matplotlib.org/3.2.1/api/colors_api.html)
++ -N, --N_cut: 剪切颜色表，颜色表是一个长度为256，下标为0~255的数组。默认的颜色表会让图像背景非常暗，为了避免背景太暗，可以把颜色表中较暗的颜色去掉。方法是设置-N参数，-N 50 意思是剪切掉颜色表中最低的50个颜色。
 + --colormap: 颜色表，有jet, rainbow, plasma, hot, gnuplot, gnuplot2 等选项可供选择。[Choosing Colormaps in Matplotlib](https://matplotlib.org/3.1.1/tutorials/colors/colormaps.html)
 
 ### Examples:
@@ -52,9 +53,9 @@ annotatefile是一个文本文件。每一行保存一条要在图像上标注�
 如果想把用椭圆表示模型、并添加文字注释，可以用cc2note.py生成annotatefile文件。然后再修改这个文件，将其作为mapplot.py的输入文件。
 
 ### normalize参数
-归一化有4中方式、线性、幂律、对数、双对数
+归一化有4中方式、线性、幂律、对数、双对数。虽然程序会自动设置vmin和vmax，但是还是建议用户设置合理的vmin和vmax值，否则会出现无法预料的情况。
 + 线性： linear vmin, vmax。线性归一化。
-+ 幂律： power gamma vmin vmax。幂律函数归一化，一般gamma取0～1之间的值。
++ 幂律： power gamma vmin vmax。幂律函数归一化，一般gamma取0～1之间的值。如果gamma小于1时vmin小于0，则会出现一部分无效的值。因为负数无法开平方。所以，当gamma小于0且数据包含负数时，建议设置vmin=0。
 + 对数： log vmin vmax。对数归一化。
 + 双对数： symlog linthresh linscale vmin vmax。双对数归一化。因为在实数范围内只有整数可以取对数，因此数据小于等于零时计算会出错。为了避免出错，设置一个阈值，当数据绝对值小于阈值时，采取线性归一化方案。
 + 双斜率： twoslope vcenter vmin vmax。双斜率归一化。
