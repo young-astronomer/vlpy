@@ -155,3 +155,6 @@ cc2mod.py 2230+114m.fits out.mod
 0.07676761597394943 4.147329807281494 162.20083618164062 1.3862905502319336 1.0 -160.34616088867188 1.0
 0.13849778473377228 16.839195251464844 144.98582458496094 3.4181699752807617 1.0 -130.42608642578125 1.0
 
+## Aacknowledgment
+If you use any of these programs in a publication, It is recommanded to cite ([Li et al., 2018, ApJ, 854, 17](https://ui.adsabs.harvard.edu/abs/2018ApJ...854...17L/abstract)) and include the following acknowledgment: "This research has made use of vlpy which is a Python package use for VLBI data analysis."
+
