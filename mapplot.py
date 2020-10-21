@@ -86,10 +86,14 @@ def get_normalize(args, vmin=0.0, vmax=1.0):
 			vmin, vmax = np.array(args[1:], dtype='f4')
 		norm = mcolors.Normalize(vmin, vmax, True)
 	elif name == 'power':
+		if len(args)==1:
+			gamma = 0.5
 		if len(args)==2:
 			gamma = float(args[1])
 		elif len(args)==4:
 			gamma, vmin, vmax = np.array(args[1:], dtype='f4')
+		if gamma < 1.0 and vmin < 0.0:
+			vmin = 0.0
 		norm = mcolors.PowerNorm(gamma, vmin, vmax, True)
 	elif name == 'log':
 		if len(args)==3:
@@ -112,11 +116,11 @@ def get_normalize(args, vmin=0.0, vmax=1.0):
 		norm = mcolors.TwoSlopeNorm(vcenter, vmin, vmax)
 	return norm
 
-def add_annotation(ax, notefile=''):
-	if notefile == '':
+def add_annotation(ax, infile=''):
+	if infile == '':
 		return
 	
-	with open(notefile, 'r') as f:
+	with open(infile, 'r') as f:
 		for line in f.readlines():
 			row = line.split(',')
 			row = [col.strip() for col in row]
@@ -181,7 +185,8 @@ def savefig(outfile, dpi=100):
 	elif outfile.lower().endswith('.png'):
 		plt.savefig(outfile, dpi=dpi)
 	
-def mapplot(infile, cmul, outfile='', win=None, levs=None, bpos=None, figsize=None, annotatefile='', cmap='', N_cut=0, norm=''):
+def mapplot(infile, cmul, outfile='', win=None, levs=None, bpos=None, 
+			figsize=None, dpi=100, annotationfile='', cmap='', N_cut=0, norm=''):
 	hdul = fits.open(infile)
 	h = hdul[0].header
 #	img = hdul[0].data[0, 0, :, :]
@@ -208,7 +213,7 @@ def mapplot(infile, cmul, outfile='', win=None, levs=None, bpos=None, figsize=No
 	fig.set_size_inches(figsize)
 	set_axis(ax, win)
 	add_beam(ax, win, h, bpos=bpos)
-	add_annotation(ax, annotatefile)
+	add_annotation(ax, annotationfile)
 	ax.contour(img, levs, extent=win, 
 			linewidths=0.5, colors='k')
 
@@ -220,7 +225,7 @@ def mapplot(infile, cmul, outfile='', win=None, levs=None, bpos=None, figsize=No
 	cbar.ax.tick_params(axis='y', labelrotation=90)
 	fig.tight_layout(pad=0.5)
 	if outfile != '':
-		savefig(outfile)
+		savefig(outfile, dpi)
 	hdul.close()
 
 def myhelp():
@@ -231,19 +236,22 @@ def main(argv):
 #	infile = r'3c66a-calib/circe-beam.fits'
 	infile = ''
 	outfile = ''
-	annotatefile = ''
+	annotationfile = ''
 	cmul = ''
 	win = None
 	levs = None
 	bpos = None
 	figsize = None
+	dpi = 100
 	colormap = ''
 	N_cut = 0
 	norm = ''
 
 	try:
-		opts, args = getopt.getopt(argv, "hi:c:o:w:l:b:f:a:n:N:", 
-							 ['help', 'infile=', 'cmul=', 'outfile=', 'win=', 'bpos=', 'figsize=', 'annotatefile=', 'levs=', 'colormap=', 'N_cut=', 'norm='])
+		opts, args = getopt.getopt(argv, "hi:c:o:w:l:b:f:d:a:n:N:", 
+							 ['help', 'infile=', 'cmul=', 'outfile=', 'win=', 
+		 'bpos=', 'figsize=', 'dpi=', 'annotatefile=', 'levs=', 'colormap=', 
+		 'N_cut=', 'norm='])
 	except getopt.GetoptError:
 		myhelp()
 		sys.exit(2)
@@ -265,8 +273,10 @@ def main(argv):
 			bpos = np.array(arg.split(), dtype=np.float64).tolist()
 		elif opt in ('-f', '--figsize'):
 			figsize = np.array(arg.split(), dtype=np.float64).tolist()
+		elif opt in ('-d', '--dpi'):
+			dpi = int(arg)
 		elif opt in ('-a', '--annotatefile'):
-			annotatefile = arg
+			annotationfile = arg
 		elif opt in ('--colormap'):
 			colormap = arg
 		elif opt in ('-N', '--N_cut'):
@@ -285,7 +295,7 @@ def main(argv):
 	if type(win) == str:
 		win = np.array(win.split(), dtype=np.float64).tolist()
 	mapplot(infile, cmul, outfile=outfile, win=win, levs=levs, bpos=bpos, 
-		 figsize=figsize, annotatefile=annotatefile, 
+		 figsize=figsize, dpi=dpi, annotationfile=annotationfile, 
 		 cmap=colormap, N_cut=N_cut, norm=norm)
 
 if __name__ == '__main__' :
