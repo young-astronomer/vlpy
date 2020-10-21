@@ -68,6 +68,14 @@ def annotate(ax, notefile=''):
 #	ax.annotate('%s' % h['object'], xy=(0.125,0.91), xycoords='figure fraction')
 #	ax.annotate('%.1f GHz' % (h['crval3']/1.0E9), xy=(0.83, 0.91), xycoords='figure fraction')
 
+def cut_cmap(cmap, N_cut=0):
+#	cmap = mcolors.Colormap(cmap)
+	cmap = plt.get_cmap(cmap)
+	x = np.arange(N_cut, 256) / 256.0
+	color_index = cmap(x)
+	cmap = mcolors.ListedColormap(color_index)
+	return cmap
+
 def get_normalize(args, vmin=0.0, vmax=1.0):
 	if args == '':
 		norm = mcolors.Normalize(vmin, vmax)
@@ -76,13 +84,13 @@ def get_normalize(args, vmin=0.0, vmax=1.0):
 	if name == 'linear':
 		if len(args)==3:
 			vmin, vmax = np.array(args[1:], dtype='f4')
-		norm = mcolors.Normalize(vmin, vmax)
+		norm = mcolors.Normalize(vmin, vmax, True)
 	elif name == 'power':
 		if len(args)==2:
 			gamma = float(args[1])
 		elif len(args)==4:
 			gamma, vmin, vmax = np.array(args[1:], dtype='f4')
-		norm = mcolors.PowerNorm(gamma, vmin, vmax)
+		norm = mcolors.PowerNorm(gamma, vmin, vmax, True)
 	elif name == 'log':
 		if len(args)==3:
 			vmin, vmax = np.array(args[1:], dtype='f4')
@@ -173,7 +181,7 @@ def savefig(outfile, dpi=100):
 	elif outfile.lower().endswith('.png'):
 		plt.savefig(outfile, dpi=dpi)
 	
-def mapplot(infile, cmul, outfile='', win=None, levs=None, bpos=None, figsize=None, annotatefile='', cmap='', norm=''):
+def mapplot(infile, cmul, outfile='', win=None, levs=None, bpos=None, figsize=None, annotatefile='', cmap='', N_cut=0, norm=''):
 	hdul = fits.open(infile)
 	h = hdul[0].header
 #	img = hdul[0].data[0, 0, :, :]
@@ -191,11 +199,11 @@ def mapplot(infile, cmul, outfile='', win=None, levs=None, bpos=None, figsize=No
 	img = hdul[0].data[0, 0, W[2]:W[3], W[0]:W[1]]
 	if cmap == '':
 		cmap = 'rainbow'
+	cmap = cut_cmap(cmap, N_cut)
 	vmin, vmax = np.min(img), np.max(img)
 	if norm == '':
 		norm = 'linear %.3f %.3f' % (vmin, vmax)
 	norm = get_normalize(norm, vmin, vmax)
-	
 	fig, ax = plt.subplots()
 	fig.set_size_inches(figsize)
 	set_axis(ax, win)
@@ -230,11 +238,12 @@ def main(argv):
 	bpos = None
 	figsize = None
 	colormap = ''
+	N_cut = 0
 	norm = ''
 
 	try:
-		opts, args = getopt.getopt(argv, "hi:c:o:w:l:b:f:a:n:", 
-							 ['help', 'infile=', 'cmul=', 'outfile=', 'win=', 'bpos=', 'figsize=', 'annotatefile=', 'levs=', 'colormap=', 'norm='])
+		opts, args = getopt.getopt(argv, "hi:c:o:w:l:b:f:a:n:N:", 
+							 ['help', 'infile=', 'cmul=', 'outfile=', 'win=', 'bpos=', 'figsize=', 'annotatefile=', 'levs=', 'colormap=', 'N_cut=', 'norm='])
 	except getopt.GetoptError:
 		myhelp()
 		sys.exit(2)
@@ -260,6 +269,8 @@ def main(argv):
 			annotatefile = arg
 		elif opt in ('--colormap'):
 			colormap = arg
+		elif opt in ('-N', '--N_cut'):
+			N_cut = int(arg)
 		elif opt in ('-n', '--norm'):
 			norm = arg
 	if infile=='' and len(args)==2:
@@ -275,7 +286,7 @@ def main(argv):
 		win = np.array(win.split(), dtype=np.float64).tolist()
 	mapplot(infile, cmul, outfile=outfile, win=win, levs=levs, bpos=bpos, 
 		 figsize=figsize, annotatefile=annotatefile, 
-		 cmap=colormap, norm=norm)
+		 cmap=colormap, N_cut=N_cut, norm=norm)
 
 if __name__ == '__main__' :
 	main(sys.argv[1:])
