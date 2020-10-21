@@ -44,7 +44,7 @@ plot color map from fits image
 	4. mapplot.py -i cta102.fits -o cta102-color.pdf -w "18 -8 -20 6" -f "7 6" --cmul 1.8e-3 --colormap gnuplot -n 'power 0.3' -N 50
 	5. mapplot.py -i cta102.fits -o cta102-gnuplot2.png -w "18 -8 -20 6" -f "7 6" --cmul 1.8e-3 --colormap gnuplot2 -n 'power 0.3' -N 80 -a cta102-annotation.txt
 
-![CTA 102 color map](cta102-color.png)
+![CTA 102 rainbow map](cta102-rainbow.png)
 
 ![CTA 102 color map](cta102-gnuplot2.png)
 
