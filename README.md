@@ -71,13 +71,13 @@ annotatefile是一个文本文件。每一行保存一条要在图像上标注�
 2. normalize : [matplotlib.colors](https://matplotlib.org/3.2.1/api/colors_api.html)
 
 
-## cc2note.py
+## cc2annotation.py
 This program is used to create cta102-note.txt file which is input file of contour.py. The cta102-note.txt file contain some annotations parameters.
 1. text, x, y, some text
 2. ellipse, x, y, major axis, minor axis, posiation angle
 3. annotation, x1, y1, x2, y2, some text
 
-	cc2note.py 2230+114m.fits cta102-note.txt
+	cc2note.py 2230+114m.fits cta102-annotation.txt
 
 ## cc2tex.py
 
