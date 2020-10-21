@@ -41,7 +41,12 @@ plot color map from fits image
 	1. mapplot.py -i cta102.fits -o cta102-color.pdf -c 1.8e-3 -w '18 -8 -20 6' -f '7 6' -n 'power 0.5'
 	2. mapplot.py -w '18 -8 -20 6' -f '4.0 6' -n 'power 0.5' cta102.fits 1.8e-3
 	3. mapplot.py -i cta102.fits -o cta102-color.pdf -c 1.8e-3 -w '18 -8 -20 6' -f '7 6' -n 'power 0.5' --colormap gnuplot2
+	4. mapplot.py -i cta102.fits -o cta102-color.pdf -w "18 -8 -20 6" -f "7 6" --cmul 1.8e-3 --colormap gnuplot -n 'power 0.3' -N 50
+	5. mapplot.py -i cta102.fits -o cta102-gnuplot2.png -w "18 -8 -20 6" -f "7 6" --cmul 1.8e-3 --colormap gnuplot2 -n 'power 0.3' -N 80
+
 ![CTA 102 color map](cta102-color.png)
+
+![CTA 102 color map](cta102-gnuplot2.png)
 
 ### annotatefile
 annotatefile是一个文本文件。每一行保存一条要在图像上标注的内容。可选类型有文字，箭头、箭头+文字、椭圆。
@@ -55,7 +60,7 @@ annotatefile是一个文本文件。每一行保存一条要在图像上标注�
 ### normalize参数
 归一化有4中方式、线性、幂律、对数、双对数。虽然程序会自动设置vmin和vmax，但是还是建议用户设置合理的vmin和vmax值，否则会出现无法预料的情况。
 + 线性： linear vmin, vmax。线性归一化。
-+ 幂律： power gamma vmin vmax。幂律函数归一化，一般gamma取0～1之间的值。如果gamma小于1时vmin小于0，则会出现一部分无效的值。因为负数无法开平方。所以，当gamma小于0且数据包含负数时，建议设置vmin=0。
++ 幂律： power gamma vmin vmax。幂律函数归一化，一般gamma取0～1之间的值。如果gamma小于1时vmin小于0，则会出现一部分无效的值。因为负数无法开平方。所以，当gamma小于0且数据包含负数时，程序会自动将vmin设置为0。
 + 对数： log vmin vmax。对数归一化。
 + 双对数： symlog linthresh linscale vmin vmax。双对数归一化。因为在实数范围内只有整数可以取对数，因此数据小于等于零时计算会出错。为了避免出错，设置一个阈值，当数据绝对值小于阈值时，采取线性归一化方案。
 + 双斜率： twoslope vcenter vmin vmax。双斜率归一化。
