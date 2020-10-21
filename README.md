@@ -40,7 +40,7 @@ plot color map from fits image
 ### Examples:
 	1. mapplot.py -i cta102.fits -o cta102-color.pdf -c 1.8e-3 -w '18 -8 -20 6' -f '7 6' -n 'power 0.5'
 	2. mapplot.py -w '18 -8 -20 6' -f '4.0 6' -n 'power 0.5' cta102.fits 1.8e-3
-	3. mapplot.py -i cta102.fits -o cta102-color.pdf -c 1.8e-3 -w '18 -8 -20 6' -f '7 6' -n 'power 0.5' --colormap gnuplot2
+	3. mapplot.py -i cta102.fits -o cta102-rainbow.png -w "18 -8 -20 6" -f "7 6" --cmul 1.8e-3  -a cta102-annotation.txt --colormap rainbow -n 'power 0.4' -N 80
 	4. mapplot.py -i cta102.fits -o cta102-color.pdf -w "18 -8 -20 6" -f "7 6" --cmul 1.8e-3 --colormap gnuplot -n 'power 0.3' -N 50
 	5. mapplot.py -i cta102.fits -o cta102-gnuplot2.png -w "18 -8 -20 6" -f "7 6" --cmul 1.8e-3 --colormap gnuplot2 -n 'power 0.3' -N 80 -a cta102-annotation.txt
 
