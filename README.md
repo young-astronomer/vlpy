@@ -3,7 +3,7 @@ Some python programs for VLBI data analysis and visualization
 1. contour.py
 2. cc2note.py
 3. cc2tex.py convert AIPS CC table to latex table
-4. cc2mod.py AIPS CC table to Dimmap mod file
+4. cc2mod.py AIPS CC table to Difmap mod file
 5. polplot.py plot polarization image
 6. prtan.py Print AN table in uvfits file
 
