@@ -26,7 +26,7 @@ plot color map from fits image
 
 ### Parameters
 + -i, --infile: 输入文件，该文件必须是fits图像。例如：cta102.fits
-+ -o, --outfile: 输出文件，文件可以是pdf, png, jpg格式。例如: cta102.pnd, cta102.pdf
++ -o, --outfile: 输出文件，文件可以是pdf, png, jpg格式。例如: cta102.png, cta102.pdf
 + -f, --figsize: 输出图像的尺寸，单位是英寸。有时候colormap和绘图区没有对齐，可以通过调整figsize使其对齐。例如： '7 6', '6.8 6'。两个参数分表表示宽和高，中间用空格隔开，并且放在两个引号之间
 + -w, --win: 绘图区域。例如： '18 -8 -20 6'，'15 -15 -25 5'。四个参数分别表示左边界、右边界、下边界、上边界。参数之间用空格隔开，参数放在引号之间。
 + -b, --bpos: 波束位置。可选参数。有时候程序设置的波束位置不太合适，可以通过bpos参数进行修改。如'16 -18'，两个参数分别表示横纵坐标，中间用空格隔开。
@@ -81,6 +81,19 @@ You should specify the input fits images by -i or --infile,
 	restore beam position by -b or --bpos
 	figsize by -f or --figsize
 
+### Parameters
++ -i, --infile: 输入文件，该文件必须是fits图像。例如：-i 'i.fits q.fits u.fits'
++ -o, --outfile: 输出文件，文件可以是pdf, png, jpg格式。例如: cta102.png, cta102.pdf, pol-color.jpg
++ -p, --pol：偏振参数。四个浮点数分别表示icut, pcut, inc, scale。例如：-p '3.2e-3 2.43e-3 4 1'。总流量低于icut或偏振流量$p=\sqrt(q^2+u^2)$低于pcut的像素点将会被切掉。inc表示每隔多少个像素显示一个偏振线。scale表示偏振长度，值越小，线越长。
++ -f, --figsize: 输出图像的尺寸，单位是英寸。有时候colormap和绘图区没有对齐，可以通过调整figsize使其对齐。例如： -f '7 6', --figsize '6.8 6'。两个参数分表表示宽和高，中间用空格隔开，并且放在两个引号之间
++ -w, --win: 绘图区域。例如： -w '18 -8 -20 6'，--win '15 -15 -25 5'。四个参数分别表示左边界、右边界、下边界、上边界。参数之间用空格隔开，参数放在引号之间。
++ -b, --bpos: 波束位置。可选参数。有时候程序设置的波束位置不太合适，可以通过bpos参数进行修改。如'16 -18'，两个参数分别表示横纵坐标，中间用空格隔开。
++ -c, --cmul: 等值线的小值。根据图像的噪声设置，一般为三倍噪声。也可根据自己的目的，任意设置。如: 0.003, 1.8e-3, 1.6e-4 等格式，单位是Jansky。
++ -l, --levs: 等高线值列表。可选参数。默认值是cmul X (-1, 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096)
++ -a, --annotatefile: 标记文件，主要用于在图像上添加文字，箭头等。-a annotation.txt
++ -n, --normalize: 颜色归一化参数。有线性、对数、双对数、幂律等类型可供选择。例如 -n 'power 0.5'，-n 'linear'。[matplotlib.colors](https://matplotlib.org/3.2.1/api/colors_api.html)
++ -N, --cut: 剪切颜色表，颜色表是一个长度为256，下标为0~255的数组。默认的颜色表会让图像背景非常暗，为了避免背景太暗，可以把颜色表中较暗的颜色去掉。方法是设置-N参数，-N 50 意思是剪切掉颜色表中最低的50个颜色。
++ --colormap: 颜色表，有jet, rainbow, plasma, hot, gnuplot, gnuplot2 等选项可供选择。[Choosing Colormaps in Matplotlib](https://matplotlib.org/3.1.1/tutorials/colors/colormaps.html)
 ### Installation:
 1. copy file
 	chmod a+x contour.py
@@ -96,8 +109,13 @@ You should specify the input fits images by -i or --infile,
 	polplot.py i <input file list> -o <out.pdf> -c <cmul> -w <win> -p <pol>
 
 ### Examples:
-	1. polplot.py -i 'c.fits q.fits u.fits' -o 'pol-zoom.pdf' -c 1.6e-4 -w '5 -5 -5 5' -f '6.8 6' -p '1.28e-3 1.6e-4 3 0.05'
-	2. polplot.py -i 'c.fits q.fits u.fits' -o 'pol.pdf' -c 1.6e-4 -w '10 -5 -25 5' -f '4.0 6' -p '1.28e-3 1.6e-4 3 0.05'
+	1. polplot.py -i 'i.fits q.fits u.fits' -o cta102-pol-gnuplot2.png -w '18 -8 -20 6' -a annotation.txt -c 1.8e-3 -f '7 6' --colormap gnuplot2 -p '3.2e-3 2.43e-3 4 1' -N 50 -n 'power'
+	2. polplot.py -i 'i.fits q.fits u.fits' -o cta102-pol-rainbow.png -w '18 -8 -20 6' -a annotation.txt -c 1.8e-3 -f '7 6' --colormap rainbow -p '3.2e-3 2.43e-3 4 1' -N 0 -n 'power 0.5'
+
+![CTA 102 rainbow map](cta102-pol-rainbow.png)
+
+![CTA 102 color map](cta102-pol-gnuplot2.png)
+
 ## cc2annotation.py
 This program is used to create cta102-note.txt file which is input file of contour.py. The cta102-note.txt file contain some annotations parameters.
 1. text, x, y, some text
