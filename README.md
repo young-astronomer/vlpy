@@ -25,11 +25,11 @@ This program is used to plot contour map from fits image.
 plot color map from fits image
 
 ### Parameters
-+ -i, --infile: 输入文件，该文件必须是fits图像
-+ -o, --outfile: 输出文件，文件可以是pdf, png, jpg格式
-+ -f, --figsize: 输出图像的尺寸，单位是英寸。有时候colormap和绘图区没有对齐，可以通过调整figsize使其对齐
-+ -w, --win: 绘图区域
-+ -c, --cmul: 等值线的小值
++ -i, --infile: 输入文件，该文件必须是fits图像。例如：cta102.fits
++ -o, --outfile: 输出文件，文件可以是pdf, png, jpg格式。例如: cta102.pnd, cta102.pdf
++ -f, --figsize: 输出图像的尺寸，单位是英寸。有时候colormap和绘图区没有对齐，可以通过调整figsize使其对齐。例如： '7 6', '6.8 6'。两个参数分表表示宽和高，中间用空格隔开，并且放在两个引号之间
++ -w, --win: 绘图区域。例如： '18 -8 -20 6'，'15 -15 -25 5'。四个参数分别表示左边界、右边界、下边界、上边界。参数之间用空格隔开，参数放在引号之间。
++ -c, --cmul: 等值线的小值。根据图像的噪声设置，一般为三倍噪声。也可根据自己的目的，任意设置。如: 0.003, 1.8e-3, 1.6e-4 等格式，单位是Jansky。
 + -l, --levs: 等高线值列表。可选参数。默认值是cmul X (-1, 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096)
 + -a, --annotatefile: 标记文件，主要用于在图像上添加文字，箭头等。
 + -n, --normalize: 颜色归一化参数。有线性、对数、双对数、幂律等类型可供选择。[matplotlib.colors](https://matplotlib.org/3.2.1/api/colors_api.html)
@@ -40,6 +40,24 @@ plot color map from fits image
 	2. mapplot.py -w '18 -8 -20 6' -f '4.0 6' -n 'power 0.5' cta102.fits 1.8e-3
 	3. mapplot.py -i cta102.fits -o cta102-color.pdf -c 1.8e-3 -w '18 -8 -20 6' -f '7 6' -n 'power 0.5' --colormap gnuplot2
 ![CTA 102 color map](cta102-color.png)
+
+### annotatefile
+annotatefile是一个文本文件。每一行保存一条要在图像上标注的内容。可选类型有文字，箭头、箭头+文字、椭圆。
+
++ 文字: text, 17, 4, CTA 102。第一个参数表示标记类型是文字，第2、3个数字表示文字在图像上显示的位置。第4个参数表示要显示的文字内容。参数之间用逗号隔开，逗号两边的空格会被清楚。
++ 椭圆： ellipse, 0, 0, 1, 2, 30。 第一个参数表示标记类型为椭圆，第2、3个数字表示椭圆中心的坐标。第4、5、6个参数分别表示椭圆的长轴、短轴、方位角。
++ 箭头：arrow, 0, 0, 4, 1。第一个参数表示标记类型为箭头。第2、3个参数表示箭头位置坐标。第4、5个参数表示箭头尾部坐标。
++ 箭头+文字： annotation, 0, 0, 1, 3, Core。第1个参数表示标注类型。第2、3个参数表示箭头坐标，第4、5个参数表示箭头尾部坐标。第6个参数表示文字内容。
+如果想把用椭圆表示模型、并添加文字注释，可以用cc2note.py生成annotatefile文件。然后再修改这个文件，将其作为mapplot.py的输入文件。
+
+### normalize参数
+归一化有4中方式、线性、幂律、对数、双对数
++ 线性： linear vmin, vmax。线性归一化。
++ 幂律： power gamma vmin vmax。幂律函数归一化，一般gamma取0～1之间的值。
++ 对数： log vmin vmax。对数归一化。
++ 双对数： symlog linthresh linscale vmin vmax。双对数归一化。因为在实数范围内只有整数可以取对数，因此数据小于等于零时计算会出错。为了避免出错，设置一个阈值，当数据绝对值小于阈值时，采取线性归一化方案。
++ 双斜率： twoslope vcenter vmin vmax。双斜率归一化。
+注意，以上参数要放在引号之间，否则会解析错误。因为命令行下，系统默认参数之间用空格隔开。如果参数值本身含有空格就会解析错误。为了避免解析错误，参数应放在单引号或双引号之间。
 
 ### See also:
 1. Colormap: [Choosing Colormaps in Matplotlib](https://matplotlib.org/3.1.1/tutorials/colors/colormaps.html)
