@@ -21,6 +21,19 @@ This program is used to plot contour map from fits image.
 	contour.py -c 1.8e-3 -w '18 -8 -20 6' -n cta102-note.txt -i cta102.fits -o cta102.png
 ![CTA 102 contour image](cta102.png)
 
+## mapplot.py
+plot color map from fits image
+
+### Examples:
+	1. mapplot.py -i cta102.fits -o cta102-color.pdf -c 1.8e-3 -w '18 -8 -20 6' -f '7 6' -n 'power 0.5'
+	2. mapplot.py -w '18 -8 -20 6' -f '4.0 6' -n 'power 0.5' cta102.fits 1.8e-3
+	3. mapplot.py -i cta102.fits -o cta102-color.pdf -c 1.8e-3 -w '18 -8 -20 6' -f '7 6' -n 'power 0.5' --colormap gnuplot2
+![CTA 102 color map](cta102-color.png)
+### See also:
+Colormap: [Choosing Colormaps in Matplotlib](https://matplotlib.org/3.1.1/tutorials/colors/colormaps.html)
+normalize : [matplotlib.colors](https://matplotlib.org/3.2.1/api/colors_api.html)
+
+
 ## cc2note.py
 This program is used to create cta102-note.txt file which is input file of contour.py. The cta102-note.txt file contain some annotations parameters.
 1. text, x, y, some text
