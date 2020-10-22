@@ -25,7 +25,8 @@ This program is used to plot contour map from fits image.
 	2. contour.py <input.fits> <output.pdf>
 	3. contour.py <input.fits> <output.jpg> <cmul> <win>
 ### Examples
-	contour.py -c 1.8e-3 -w '18 -8 -20 6' -n cta102-note.txt -i cta102.fits -o cta102.png
+	contour.py cta102.fits
+	contour.py -c 1.8e-3 -w '18 -8 -20 6' -a cta102-note.txt -i cta102.fits -o cta102.png
 	contour.py -i input.fits -o output.png -c 0.001 -w "15 -15 -25 5"
 ![CTA 102 contour image](cta102.png)
 
