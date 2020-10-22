@@ -1,14 +1,22 @@
 # vlpy
 Some python programs for VLBI data analysis and visualization
-1. contour.py
-2. cc2note.py
-3. cc2tex.py convert AIPS CC table to latex table
-4. cc2mod.py AIPS CC table to Difmap mod file
-5. polplot.py plot polarization image
-6. prtan.py Print AN table in uvfits file
+1. contour.py plot contour map
+2. mapplot.py plot color map
+3. polplot.py plot polarization image
+4. cc2annotation.py creatie annotation.txt file as an input of contour.py, mapplot.py or polplot.py
+5. cc2tex.py convert AIPS CC table to latex table
+6. cc2mod.py AIPS CC table to Difmap mod file
+7. prtan.py Print AN table in uvfits file
 
-
-
+## Installation
+In order to run the Python programs, it is needed to make the xxx.py file can be excuted. You can do this with chmod command. Then you should put the xxx.py file in /usr/local/bin or add the root dirtory of the python code to PATH enviroment variable.
+1. copy file
+	chmod a+x contour.py
+	cp coutour.py ~/myapp
+2. set envioment parameters
+	Add the following line to ~/.bashrc
+	export PATH=$PATH:/home/username/myapp
+	source ~/.bashrc
 
 ## contour.py
 This program is used to plot contour map from fits image.
@@ -94,19 +102,7 @@ You should specify the input fits images by -i or --infile,
 + -n, --normalize: 颜色归一化参数。有线性、对数、双对数、幂律等类型可供选择。例如 -n 'power 0.5'，-n 'linear'。[matplotlib.colors](https://matplotlib.org/3.2.1/api/colors_api.html)
 + -N, --cut: 剪切颜色表，颜色表是一个长度为256，下标为0~255的数组。默认的颜色表会让图像背景非常暗，为了避免背景太暗，可以把颜色表中较暗的颜色去掉。方法是设置-N参数，-N 50 意思是剪切掉颜色表中最低的50个颜色。
 + --colormap: 颜色表，有jet, rainbow, plasma, hot, gnuplot, gnuplot2 等选项可供选择。[Choosing Colormaps in Matplotlib](https://matplotlib.org/3.1.1/tutorials/colors/colormaps.html)
-### Installation:
-1. copy file
-	chmod a+x contour.py
-	cp coutour.py ~/myapp
-2. set envioment parameters
-	Add the following line to ~/.bashrc
-	export PATH=$PATH:/home/usename/myapp
-	source ~/.bashrc
 
-### Running like this:
-	polplot.py -c <cmul> -w <win> -p <pol-params> <i.fits> <q.fits> <u.fits>
-	polplot.py -c <cmul> -w <win> -p <pol-params> <i.fits> <q.fits> <u.fits> <out.pdf>
-	polplot.py i <input file list> -o <out.pdf> -c <cmul> -w <win> -p <pol>
 
 ### Examples:
 	1. polplot.py -i 'i.fits q.fits u.fits' -o cta102-pol-gnuplot2.png -w '18 -8 -20 6' -a annotation.txt -c 1.8e-3 -f '7 6' --colormap gnuplot2 -p '3.2e-3 2.43e-3 4 1' -N 50 -n 'power'
