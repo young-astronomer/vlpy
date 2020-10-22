@@ -21,12 +21,12 @@ In order to run the Python programs, it is needed to make the xxx.py file can be
 ## contour.py
 This program is used to plot contour map from fits image.
 ### Runnig program
-	1. contour.py <input.fits> <cmul>
-	2. contour.py <input.fits> <output.pdf> <cmul>
+	1. contour.py <input.fits>
+	2. contour.py <input.fits> <output.pdf>
 	3. contour.py <input.fits> <output.jpg> <cmul> <win>
-	4. contour.py -i <input.fits> -o <output.png> -c <0.001> -w "<15 -15 -25 5>"
 ### Examples
 	contour.py -c 1.8e-3 -w '18 -8 -20 6' -n cta102-note.txt -i cta102.fits -o cta102.png
+	contour.py -i input.fits -o output.png -c 0.001 -w "15 -15 -25 5"
 ![CTA 102 contour image](cta102.png)
 
 ## mapplot.py
