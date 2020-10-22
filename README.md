@@ -42,7 +42,7 @@ plot color map from fits image
 + -l, --levs: 等高线值列表。可选参数。默认值是cmul X (-1, 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096)
 + -a, --annotatefile: 标记文件，主要用于在图像上添加文字，箭头等。
 + -n, --normalize: 颜色归一化参数。有线性、对数、双对数、幂律等类型可供选择。[matplotlib.colors](https://matplotlib.org/3.2.1/api/colors_api.html)
-+ -N, --N_cut: 剪切颜色表，颜色表是一个长度为256，下标为0~255的数组。默认的颜色表会让图像背景非常暗，为了避免背景太暗，可以把颜色表中较暗的颜色去掉。方法是设置-N参数，-N 50 意思是剪切掉颜色表中最低的50个颜色。
++ -N, --ncut: 剪切颜色表，颜色表是一个长度为256，下标为0~255的数组。默认的颜色表会让图像背景非常暗，为了避免背景太暗，可以把颜色表中较暗的颜色去掉。方法是设置-N参数，-N 50 意思是剪切掉颜色表中最低的50个颜色。
 + --colormap: 颜色表，有jet, rainbow, plasma, hot, gnuplot, gnuplot2 等选项可供选择。[Choosing Colormaps in Matplotlib](https://matplotlib.org/3.1.1/tutorials/colors/colormaps.html)
 
 ### Examples:
@@ -100,7 +100,7 @@ You should specify the input fits images by -i or --infile,
 + -l, --levs: 等高线值列表。可选参数。默认值是cmul X (-1, 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096)
 + -a, --annotatefile: 标记文件，主要用于在图像上添加文字，箭头等。-a annotation.txt
 + -n, --normalize: 颜色归一化参数。有线性、对数、双对数、幂律等类型可供选择。例如 -n 'power 0.5'，-n 'linear'。[matplotlib.colors](https://matplotlib.org/3.2.1/api/colors_api.html)
-+ -N, --cut: 剪切颜色表，颜色表是一个长度为256，下标为0~255的数组。默认的颜色表会让图像背景非常暗，为了避免背景太暗，可以把颜色表中较暗的颜色去掉。方法是设置-N参数，-N 50 意思是剪切掉颜色表中最低的50个颜色。
++ -N, --ncut: 剪切颜色表，颜色表是一个长度为256，下标为0~255的数组。默认的颜色表会让图像背景非常暗，为了避免背景太暗，可以把颜色表中较暗的颜色去掉。方法是设置-N参数，-N 50 意思是剪切掉颜色表中最低的50个颜色。
 + --colormap: 颜色表，有jet, rainbow, plasma, hot, gnuplot, gnuplot2 等选项可供选择。[Choosing Colormaps in Matplotlib](https://matplotlib.org/3.1.1/tutorials/colors/colormaps.html)
 
 
@@ -118,7 +118,7 @@ This program is used to create cta102-note.txt file which is input file of conto
 2. ellipse, x, y, major axis, minor axis, posiation angle
 3. annotation, x1, y1, x2, y2, some text
 
-	cc2note.py 2230+114m.fits cta102-annotation.txt
+	cc2annotation.py 2230+114m.fits cta102-annotation.txt
 
 ## cc2tex.py
 
