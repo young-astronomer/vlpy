@@ -28,7 +28,7 @@ This program is used to plot contour map from fits image.
 	contour.py cta102.fits
 	contour.py -c 1.8e-3 -w '18 -8 -20 6' -a cta102-note.txt -i cta102.fits -o cta102.png
 	contour.py -i input.fits -o output.png -c 0.001 -w "15 -15 -25 5"
-![CTA 102 contour image](cta102.png)
+![CTA 102 contour image](./image/cta102.png)
 
 ## mapplot.py
 plot color map from fits image
@@ -53,9 +53,9 @@ plot color map from fits image
 	4. mapplot.py -i cta102.fits -o cta102-color.pdf -w "18 -8 -20 6" -f "7 6" --cmul 1.8e-3 --colormap gnuplot -n 'power 0.3' -N 50
 	5. mapplot.py -i cta102.fits -o cta102-gnuplot2.png -w "18 -8 -20 6" -f "7 6" --cmul 1.8e-3 --colormap gnuplot2 -n 'power 0.3' -N 80 -a cta102-annotation.txt
 
-![CTA 102 rainbow map](cta102-rainbow.png)
+![CTA 102 rainbow map](./image/cta102-rainbow.png)
 
-![CTA 102 color map](cta102-gnuplot2.png)
+![CTA 102 color map](./image/cta102-gnuplot2.png)
 
 ### annotatefile
 annotatefile是一个文本文件。每一行保存一条要在图像上标注的内容。可选类型有文字，箭头、箭头+文字、椭圆。
@@ -109,9 +109,9 @@ You should specify the input fits images by -i or --infile,
 	1. polplot.py -i 'i.fits q.fits u.fits' -o cta102-pol-gnuplot2.png -w '18 -8 -20 6' -a annotation.txt -c 1.8e-3 -f '7 6' --colormap gnuplot2 -p '3.2e-3 2.43e-3 4 1' -N 50 -n 'power'
 	2. polplot.py -i 'i.fits q.fits u.fits' -o cta102-pol-rainbow.png -w '18 -8 -20 6' -a annotation.txt -c 1.8e-3 -f '7 6' --colormap rainbow -p '3.2e-3 2.43e-3 4 1' -N 0 -n 'power 0.5'
 
-![CTA 102 rainbow map](cta102-pol-rainbow.png)
+![CTA 102 rainbow map](./image/cta102-pol-rainbow.png)
 
-![CTA 102 color map](cta102-pol-gnuplot2.png)
+![CTA 102 color map](./image/cta102-pol-gnuplot2.png)
 
 ## cc2annotation.py
 This program is used to create cta102-note.txt file which is input file of contour.py. The cta102-note.txt file contain some annotations parameters.
