@@ -21,9 +21,9 @@ Installation:
 	source ~/.bashrc
 
 Running like this:
-	contour.py <input.fits> <cmul>
-	contour.py <input.fits> <output.pdf> <cmul>
-	contour.py <input.fits> <output.jpg> <cmul> <win>
+	contour.py <input.fits>
+	contour.py <input.fits> <output.pdf>
+	contour.py <input.fits> <output.jpg>
 	contour.py -i <input.fits> -o <output.png> -c <0.001> -w "15 -15 -25 5"
 
 @author: Li, Xiaofeng
@@ -37,8 +37,65 @@ from astropy.table import Table
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.patches import Ellipse
+from skimage import measure
 
-def add_beam(ax, win, h, bpos=None, pad=2.0):
+def detect_source(img, thresh, area=500):
+	mask = np.copy(img)
+	mask[mask<thresh] = 0
+	mask[mask>=thresh] = 1
+	label_image = measure.label(mask, background=0, connectivity=2)
+	
+	label = -1
+	max_area = 0
+	bbox = ()
+	labels = []
+	regions = measure.regionprops(label_image)
+	for region in regions:
+#		print(region.label, region.area)
+		if region.area>max_area:
+			max_area = region.area
+			label = region.label
+			bbox = region.bbox
+		if region.area > area:
+			labels.append(region.label)
+	y1, x1, y2, x2 = bbox
+	if len(labels) < 2:
+		label_image[label_image!=label] = 0
+		label_image[label_image==label] = 1
+	else:
+		for region in regions:
+			if region.label in labels:
+				box = region.bbox
+				if box[0]<y1:
+					y1 = box[0]
+				if box[1]<x1:
+					x1 = box[1]
+				if box[2]>y2:
+					y2 = box[2]
+				if box[3]>x2:
+					x2 = box[3]
+	bbox = y1, x1, y2, x2
+	return label_image, bbox
+
+def create_box(bbox, pad=0.2):
+	d = np.max([bbox[2]-bbox[0], bbox[3]-bbox[1]])
+	x0 = (bbox[1] + bbox[3]) /2.0
+	y0 = (bbox[0] + bbox[2]) / 2.0
+	x1 = x0 - 0.5 * d/(1-2.0*pad)
+	x2 = 2 * x0 - x1
+	y1 = y0 - 0.5 * d/(1-2.0*pad)
+	y2 = 2 * y0 - y1
+	return int(x1), int(x2), int(y1), int(y2)
+
+def calc_rms(img):
+	data = img.flatten()
+	mid = np.median(data)
+	data = data[data<mid]
+	var = 2 * np.sum((data[data<mid]-mid)**2)
+	rms = np.sqrt(var/(data.size-1))
+	return rms
+
+def add_beam(ax, win, h, bpos=None, pad=1.5):
 	if bpos==None :
 		x = win[0] - pad * h['bmaj']*3.6E6
 		y = win[2] + pad * h['bmaj']*3.6E6
@@ -54,14 +111,17 @@ def annotate(ax, notefile=''):
 		tab = Table.read(notefile, format='csv')
 		for t in tab:
 			ax.text(t['x'], t['y'], t['text'])
-#	ax.annotate('%s' % h['object'], xy=(0.125,0.91), xycoords='figure fraction')
-#	ax.annotate('%.1f GHz' % (h['crval3']/1.0E9), xy=(0.83, 0.91), xycoords='figure fraction')
 
-def add_annotation(ax, notefile=''):
-	if notefile == '':
+def add_default_annotation(ax, h):
+	ax.annotate('%s' % h['object'], xy=(0.125,0.93), xycoords='figure fraction')
+	ax.annotate('%s/%.1f GHz' % (h['telescop'], h['crval3']/1.0E9), xy=(0.79, 0.93), xycoords='figure fraction')
+	ax.annotate('%s' % h['date-obs'], xy=(0.83, 0.12), xycoords='figure fraction')
+
+def add_annotation(ax, infile=''):
+	if infile == '':
 		return
 	
-	with open(notefile, 'r') as f:
+	with open(infile, 'r') as f:
 		for line in f.readlines():
 			row = line.split(',')
 			row = [col.strip() for col in row]
@@ -82,7 +142,7 @@ def add_annotation(ax, notefile=''):
 				 arrowprops=dict(arrowstyle="->", connectionstyle="arc3"))
 			elif typ == 'ellipse':
 				x, y, majax, minax, pa = np.array(args, dtype='f4')
-				e = Ellipse((x,y), majax, minax, angle=pa, lw=0.5, ec='k', facecolor='none')
+				e = Ellipse((x,y), majax, minax, angle=pa, lw=0.5, fc='none', ec='blue')
 				ax.add_artist(e)
 
 def set_axis(ax, w):
@@ -95,7 +155,7 @@ def set_axis(ax, w):
 	ax.tick_params(which='minor',length=4)
 	ax.minorticks_on()
 
-def word2pix(w, h):
+def world2pix(w, h):
 	if w == None:
 		W = [0, h['naxis1'], 0, h['naxis2']]
 	else:
@@ -107,7 +167,7 @@ def word2pix(w, h):
 		W = [int(X0), int(X1), int(Y0), int(Y1)]
 	return W
 
-def pix2word(W, h):
+def pix2world(W, h):
 	if W == None:
 		W = [0, h['naxis1'], 0, h['naxis2']]
 	X0, X1, Y0, Y1 = W
@@ -118,7 +178,7 @@ def pix2word(W, h):
 	w = [x0, x1, y0, y1]
 	return w
 
-def savefig(outfile, dpi=300):
+def savefig(outfile, dpi=100):
 	if outfile.lower().endswith('.pdf') :
 		plt.savefig(outfile)
 	elif outfile.lower().endswith('.jpg') or outfile.lower().endswith('.jpeg'):
@@ -126,27 +186,41 @@ def savefig(outfile, dpi=300):
 	elif outfile.lower().endswith('.png'):
 		plt.savefig(outfile, dpi=dpi)
 	
-def contour(infile, cmul, outfile='', win=None, levs=None, bpos=None, figsize=None, notefile=''):
+def contour(infile, cmul, outfile='', win=None, levs=None, bpos=None, figsize=None, annotationfile=''):
 	hdul = fits.open(infile)
 	h = hdul[0].header
 	img = hdul[0].data[0, 0, :, :]
 	
+	if type(cmul) == str:
+		if cmul != '':
+			cmul = float(cmul)
+		else:
+			cmul = 3 * calc_rms(img)
+			print('Set cmul = %.2f mJy/beam' % (cmul*1000))
 	if levs==None:
 		levs = cmul*np.array([-1,1,2,4,8,16,32,64,128,256,512,1024,2048,4096])
-#	print(win)
+
 	if figsize == None :
 		figsize = (6, 6)
+	
 	if win == None:
-		win = pix2word(None, h)
-		W = word2pix(None, h)
+		label_image, bbox = detect_source(img, cmul)
+		W = create_box(bbox, 0.15)
+		win = pix2world(W, h)
+		print('Set win = %.1f %.1f %.1f %.1f' % tuple(win))
+#		win = pix2world(None, h)
+#		W = world2pix(None, h)
 	else:
-		W = word2pix(win, h)
+		W = world2pix(win, h)
 	
 	fig, ax = plt.subplots()
 	fig.set_size_inches(figsize)
 	set_axis(ax, win)
 	add_beam(ax, win, h, bpos=bpos)
-	add_annotation(ax, notefile)
+	if annotationfile == '':
+		add_default_annotation(ax, h)
+	else:
+		add_annotation(ax, annotationfile)
 	ax.contour(img[W[2]:W[3], W[0]:W[1]], levs, extent=win, 
 			linewidths=0.5, colors='k')
 	fig.tight_layout(pad=0.5)
@@ -164,7 +238,7 @@ def main(argv):
 #	infile = r'3c66a-calib/circe-beam.fits'
 	infile = ''
 	outfile = ''
-	notefile = ''
+	annotationfile = ''
 	cmul = ''
 	win = None
 	levs = None
@@ -172,8 +246,8 @@ def main(argv):
 	figsize = None
 
 	try:
-		opts, args = getopt.getopt(argv, "hi:c:o:w:l:b:f:n:", 
-							 ['help', 'infile', 'cmul', 'outfile', 'win', 'bpos', 'figsize', 'note', 'levs'])
+		opts, args = getopt.getopt(argv, "hi:c:o:w:l:b:f:a:", 
+							 ['help', 'infile', 'cmul', 'outfile', 'win', 'bpos', 'figsize', 'annotationfile', 'levs'])
 	except getopt.GetoptError:
 		myhelp()
 		sys.exit(2)
@@ -195,18 +269,20 @@ def main(argv):
 			bpos = np.array(arg.split(), dtype=np.float64).tolist()
 		elif opt in ('-f', '--figsize'):
 			figsize = np.array(arg.split(), dtype=np.float64).tolist()
-		elif opt in ('-n', '--note'):
-			notefile = arg
+		elif opt in ('-a', '--annotationfile'):
+			annotationfile = arg
+	if infile=='' and len(args)==1:
+		infile = args[0]
 	if infile=='' and len(args)==2:
-		infile, cmul = args
-	if infile=='' and outfile=='' and len(args)==3:
-		infile, outfile, cmul = args
-	if infile=='' and outfile=='' and len(args)==4:
+		infile, outfile = args
+	if infile=='' and len(args)==4:
 		infile, outfile, cmul, win = args
-	cmul = float(cmul)
+	if outfile == '':
+		outfile = infile.split('.')[0] + '.pdf'
+#	cmul = float(cmul)
 	if type(win) == str:
 		win = np.array(win.split(), dtype=np.float64).tolist()
-	contour(infile, cmul, outfile=outfile, win=win, levs=levs, bpos=bpos, figsize=figsize, notefile=notefile)
+	contour(infile, cmul, outfile=outfile, win=win, levs=levs, bpos=bpos, figsize=figsize, annotationfile=annotationfile)
 
 if __name__ == '__main__' :
 	main(sys.argv[1:])
